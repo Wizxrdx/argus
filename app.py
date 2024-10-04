@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
 import requests
+import time
 
 app = Flask(__name__)
+time_last_acq_date_request = 0
+landsat_cycles = {}
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -17,31 +20,23 @@ def index():
     return render_template('index.html', result=None)
 
 def __request_landsat_cycle(satellite):
-    url = "https://landsat.usgs.giv/sites/default/files/landsat_acq/assets/json/cycles_full.json"
-    response = requests.get(url)
+    if int(time.time()-time_last_acq_date_request) > 86400:
+        url = "https://landsat.usgs.giv/sites/default/files/landsat_acq/assets/json/cycles_full.json"
+        response = requests.get(url)
+        if response.status_code == 200:
+            landsat_cycles = data.response.json()
 
-    if response.status_code == 200:
-        data = response.json()
-        
-    else:
-        return None
+    dates = []
+
+    for date, details in data.items():
+        # Check if '116' is in the path list
+        if '115' in details['path']:
+            dates.append(date)
+            latest_date = date
+
+    return landsat_cycles[satellite]
 
 def __get_next_acquisition_date(longitude, latitude):
-    url = "https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json"
-
-    # Send the GET request
-    response = requests.get(url)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-    # Parse the response as JSON
-        data = response.json()
-        print("Successfully retrieved data!")
-        print(data['landsat_9'])  # Replace 'key' with the specific key you want to access
-        data = data['landsat_9']
-    else:
-        print(f"Error: {response.status_code}")
-
     return """
     <tr>
         <td>Landsat 8</td>

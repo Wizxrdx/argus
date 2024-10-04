@@ -12,22 +12,19 @@
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
 </head>
-<body>
-    <h1>Select location</h1>
-    
+<body>    
     <form method="POST">
         <!-- Map container -->
         <div id="map"></div>
-        <br><br>
-        
+                
         <!-- Input for longitude and latitude -->
         <label for="longitude">Longitude:</label>
         <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" value="0">
-        <br><br>
+        
         
         <label for="latitude">Latitude:</label>
         <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" value="0">
-        <br><br>
+        <br>
         
         <!-- Submit button -->
         <input type="submit" value="Submit">
@@ -49,7 +46,12 @@
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
     <script>
-        // Create the map
+        function normalizeLatLng(latLng) {
+            // Wrap longitude within [-180, 180]
+            var lng = ((latLng.lng + 180) % 360 + 360) % 360 - 180;
+
+            return L.latLng(latLng.lat, lng);
+        }
         var map = L.map('map').setView([0, 0], 2);
         
         // Add a tile layer with WRS-2
@@ -64,8 +66,9 @@
         // Update the marker position when the map is clicked
         map.on('click', function(e) {
             marker.setLatLng(e.latlng);
-            document.getElementById('latitude').value = e.latlng.lat;
-            document.getElementById('longitude').value = e.latlng.lng;
+            latlng = normalizeLatLng(e.latlng);
+            document.getElementById('latitude').value = latlng.lat;
+            document.getElementById('longitude').value = latlng.lng;
         });
     </script>
 </body>

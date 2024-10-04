@@ -10,6 +10,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
+  margin: 5%;
 }
 
 h1, h2 {
@@ -18,6 +19,8 @@ h1, h2 {
 }
 
 form {
+  max-width: 80%;
+  margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -74,12 +77,8 @@ p {
 /* Map Styles */
 
 #map {
-  position: relative;
-  width: 100%;
   border: 1px solid black;
-  margin: 20px auto;
-  overflow: hidden;
-  clear: both;
+  margin-bottom: 20px;
 }
 
 .leaflet-container {

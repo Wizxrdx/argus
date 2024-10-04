@@ -5,11 +5,6 @@ body {
   font-size: 14px;
 }
 
-form {
-  max-width: 300px;
-  margin: 20px auto;
-}
-
 label {
   font-size: 12px;
   margin-bottom: 5px;
