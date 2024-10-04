@@ -22,9 +22,13 @@ def index():
 def __request_landsat_cycle(satellite):
     if int(time.time()-time_last_acq_date_request) > 86400:
         url = "https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json"
+        print("Requesting Landsat cycles...")
         response = requests.get(url)
         if response.status_code == 200:
             landsat_cycles = response.json()
+            time_last_acq_date_request = int(time.time())
+            print("Landsat cycles successfully retrieved.")
+        
 
     return landsat_cycles[satellite]
 
