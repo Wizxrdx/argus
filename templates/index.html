@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARGUS</title>
+    <link rel="stylesheet" href="static/base.css">
+    <link rel="stylesheet" href="static/small.css" media="(max-width: 480px)">
+    <link rel="stylesheet" href="static/medium.css" media="(max-width: 768px) and (min-width: 481px)">
+    <link rel="stylesheet" href="static/large.css" media="(min-width: 769px)">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+</head>
+<body>
+    <h1>Select location</h1>
+    
+    <form method="POST">
+        <!-- Map container -->
+        <div id="map"></div>
+        <br><br>
+        
+        <!-- Input for longitude and latitude -->
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" value="0">
+        <br><br>
+        
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" value="0">
+        <br><br>
+        
+        <!-- Submit button -->
+        <input type="submit" value="Submit">
+    </form>
+    
+    <!-- Display result -->
+    {% if result %}
+        <table>
+            <tr>
+                <th>Satellite Name</th>
+                <th>Next Acquisition Date</th>
+                <th>Set Notification</th>
+            </tr>
+            {{ result|safe }}
+        </table>
+    {% endif %}
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <script>
+        // Create the map
+        var map = L.map('map').setView([0, 0], 2);
+        
+        // Add a tile layer with WRS-2
+        L.tileLayer('https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            subdomains: ['a', 'b', 'c']
+        }).addTo(map);
+        
+        // Add a marker
+        var marker = L.marker([0, 0]).addTo(map);
+        
+        // Update the marker position when the map is clicked
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            document.getElementById('latitude').value = e.latlng.lat;
+            document.getElementById('longitude').value = e.latlng.lng;
+        });
+    </script>
+</body>
+</html>
