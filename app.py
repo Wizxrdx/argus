@@ -1,11 +1,28 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from src.utils import WRS2, LandsatAcquisition
-import time
-from src.utils import WRS2
+import io
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 schedule = LandsatAcquisition()
 wrs2 = WRS2()
+
+@app.route('/plot.png')
+def plot():
+    longitude = request.args.get('long', default=0, type=float)
+    latitude = request.args.get('lat', default=0, type=float)
+
+    # Generate the plot
+    fig, ax = plt.subplots()
+    ax.plot([longitude, longitude, longitude], [latitude, latitude, latitude], [4, 2, 3])
+    ax.set_title('Sample Plot')
+
+    # Save the plot to a BytesIO object
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    return send_file(img, mimetype='image/png')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
