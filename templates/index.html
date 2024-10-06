@@ -9,8 +9,12 @@
     <link rel="stylesheet" href="static/portrait.css" media="(orientation: portrait)">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-          crossorigin=""/>
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <form method="POST">
@@ -31,45 +35,6 @@
     </form>
     
     <!-- Display result -->
-    {% if result %}
-        {{ img|safe }}
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Satellite</th>
-                <th>Set Notification</th>
-            </tr>
-            {{ result|safe }}
-        </table>
-    {% endif %}
-    
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-            crossorigin=""></script>
-    <script>
-        function normalizeLatLng(latLng) {
-            // Wrap longitude within [-180, 180]
-            var lng = ((latLng.lng + 180) % 360 + 360) % 360 - 180;
-
-            return L.latLng(latLng.lat, lng);
-        }
-        var map = L.map('map').setView([0, 0], 2);
-        
-        L.tileLayer('https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
-            subdomains: ['a', 'b', 'c']
-        }).addTo(map);
-        
-        // Add a marker
-        var marker = L.marker([0, 0]).addTo(map);
-        
-        // Update the marker position when the map is clicked
-        map.on('click', function(e) {
-            marker.setLatLng(e.latlng);
-            latlng = normalizeLatLng(e.latlng);
-            document.getElementById('latitude').value = latlng.lat;
-            document.getElementById('longitude').value = latlng.lng;
-        });
-    </script>
+    <script src="static/index.js"></script>
 </body>
 </html>
