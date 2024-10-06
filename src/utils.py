@@ -135,6 +135,6 @@ class LandsatAcquisition:
 
             # Check if the path matches and if the date is today or in the future
             if str(path) in details['path'] and date >= current_date:
-                results.append(date_str)
+                results.append(date.strftime("%b. %d, %Y"))
 
         return results
