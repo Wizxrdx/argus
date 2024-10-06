@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file, jsonify
 from src.utils import WRS2, LandsatAcquisition
+from src.sentinel_api import SentinelDataRetriever, display_image_from_list
 import io
 import matplotlib.pyplot as plt
 from flask_cors import CORS
@@ -8,6 +9,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+client_id = 'sh-64233615-ff7d-48cb-837f-18b46b07e4ca'
+client_secret = 'a8Su2H9C36qa3oaEXGDEe6MQLrGMuzgV'
+token_url = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
+base_url = "https://sh.dataspace.copernicus.eu"
+
+# Initialize the SentinelDataRetriever
+sentinel_data_retriever = SentinelDataRetriever(client_id, client_secret, token_url, base_url)
 schedule = LandsatAcquisition()
 wrs2 = WRS2()
 
@@ -16,15 +24,13 @@ def plot():
     longitude = request.args.get('long', default=0, type=float)
     latitude = request.args.get('lat', default=0, type=float)
 
-    # Generate the plot
-    fig, ax = plt.subplots()
-    ax.plot([longitude, longitude, longitude], [latitude, latitude, latitude], [4, 2, 3])
-    ax.set_title('Sample Plot')
+    band_data = sentinel_data_retriever.retrieve_band_data(longitude, latitude, time_interval=("2024-09-20", "2024-10-01"))
+    image = display_image_from_list(band_data[1]['values'], brightness_factor=3.5/10000)
 
-    # Save the plot to a BytesIO object
+    # Save the image to a BytesIO object
     img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
+    image.save(img, format='PNG')  # You can specify the format (e.g., 'JPEG', 'PNG')
+    img.seek(0)  # Go back to the beginning of the BytesIO ob
 
     return send_file(img, mimetype='image/png')
 
@@ -38,6 +44,7 @@ def index():
         
         result = __get_next_acquisition_date(longitude, latitude)
         img = f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}" alt="Generated Plot">'
+        
 
         rendered_table = render_template('table.html', result=result, img=img)
         return jsonify({'html': rendered_table, 'img':img})
@@ -70,8 +77,12 @@ def __get_next_acquisition_date(longitude, latitude):
     path, row = wrs2.get_path_row(longitude, latitude)
     landsat8_schedules = schedule.get_next_acquisition_dates('landsat_8', path)
     landsat9_schedules = schedule.get_next_acquisition_dates('landsat_9', path)
+    future_dates = sentinel_data_retriever.get_future_dates(longitude, latitude, 3)  # Get future dates for 1 month
 
     next_acq_dates = {}
+
+    for date in future_dates:
+        next_acq_dates[date] = 'Sentinel 2'
 
     for date in landsat8_schedules:
         next_acq_dates[date] = 'Landsat 8'

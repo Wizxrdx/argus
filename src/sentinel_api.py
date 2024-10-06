@@ -8,6 +8,7 @@ from sentinelhub import (
     SHConfig, CRS, BBox, DataCollection,
     SentinelHubRequest, MimeType, MosaickingOrder, SentinelHubCatalog, bbox_to_dimensions
 )
+from PIL import Image
 
 class SentinelDataRetriever:
     def __init__(self, client_id, client_secret, token_url, base_url):
@@ -22,9 +23,11 @@ class SentinelDataRetriever:
         """
         self.config = self.initialize_sentinelhub_config(client_id, client_secret, token_url, base_url)
         self.catalog = SentinelHubCatalog(config=self.config)
+        print("Initializing Done.")
 
     def initialize_sentinelhub_config(self, client_id, client_secret, token_url, base_url):
         """Initialize and configure the SentinelHub API."""
+        print("Initializing Sentinel Hub...")
         config = SHConfig()
         config.sh_client_id = client_id
         config.sh_client_secret = client_secret
@@ -45,10 +48,10 @@ class SentinelDataRetriever:
 
     def get_bounding_box(self, lon, lat, delta=0.00015):
         """Create a bounding box around a location (lon, lat)."""
-        min_lon = lon - delta
-        max_lon = lon + delta
-        min_lat = lat - delta
-        max_lat = lat + delta
+        min_lon = float(lon) - delta
+        max_lon = float(lon) + delta
+        min_lat = float(lat) - delta
+        max_lat = float(lat) + delta
 
         coordinates = self.create_polygon(min_lon, max_lon, min_lat, max_lat)
         polygon = Polygon(coordinates)
@@ -69,17 +72,35 @@ class SentinelDataRetriever:
 
     def create_sentinelhub_request(self, bbox, size, time_interval, evalscript):
         """Create a SentinelHub request for satellite data."""
+        # request = SentinelHubRequest(
+        #     evalscript=evalscript,
+        #     input_data=[SentinelHubRequest.input_data(
+        #         data_collection=DataCollection.SENTINEL2_L2A,
+        #         time_interval=time_interval,
+        #         mosaicking_order=MosaickingOrder.LEAST_CC
+        #     )],
+        #     responses=[SentinelHubRequest.output_response("default", MimeType.TIFF)],
+        #     bbox=bbox,
+        #     size=size,
+        #     config=self.config,
+        # )
+        # return request
+        config = self.config
         request = SentinelHubRequest(
             evalscript=evalscript,
-            input_data=[SentinelHubRequest.input_data(
-                data_collection=DataCollection.SENTINEL2_L2A,
-                time_interval=time_interval,
-                mosaicking_order=MosaickingOrder.LEAST_CC
-            )],
+            input_data=[
+                SentinelHubRequest.input_data(
+                    data_collection=DataCollection.SENTINEL2_L2A.define_from(
+                        "s2l2a", service_url=config.sh_base_url
+                    ),
+                    time_interval=time_interval,
+                    mosaicking_order=MosaickingOrder.LEAST_CC,
+                )
+            ],
             responses=[SentinelHubRequest.output_response("default", MimeType.TIFF)],
             bbox=bbox,
             size=size,
-            config=self.config,
+            config=config,
         )
         return request
 
@@ -154,18 +175,38 @@ class SentinelDataRetriever:
         latest_date = sorted_dates[-1] if sorted_dates else None
 
         if latest_date:
-            next_dates = [latest_date + datetime.timedelta(days=i * 5) for i in range(1, 6)]
+            next_dates = [latest_date + datetime.timedelta(days=i * 5) for i in range(1, num_months*5+1)]
             formatted_next_dates = [date.strftime('%Y-%m-%d %H:%M:%S') for date in next_dates]
             return formatted_next_dates
         else:
             return []
 
-    @staticmethod
-    def display_image_from_list(data_list, brightness_factor=3.5/255):
-        """Convert a list to an image and display it."""
-        image = np.array(data_list)
-        scaled_image = image * brightness_factor
-        clipped_image = np.clip(scaled_image, 0, 1)
-        plt.imshow(clipped_image)
-        plt.axis('off')
-        plt.show()
+@staticmethod
+def display_image_from_list(data_list, brightness_factor=3.5/10000):
+    """Convert a list to an image and display it."""
+    image = np.array(data_list)
+    scaled_image = image * brightness_factor
+    clipped_image = np.clip(scaled_image, 0, 1)
+
+    image_data = scaled_image.astype(np.uint8)  # Convert to uint8
+    print(image_data)
+    image = Image.fromarray(image_data)
+    
+    return image
+
+if __name__ == "__main__":
+
+    # Display the results
+    for entry in band_data:
+        print(f"Band: {entry['band']}, Values: {entry['values']}")
+
+    print("Past Dates:")
+    for date in past_dates:
+        print(date)
+
+    print("\nFuture Dates:")
+    for date in future_dates:
+        print(date)
+
+    # Display an example band image
+    sentinel_data_retriever.display
