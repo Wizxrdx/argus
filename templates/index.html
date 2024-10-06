@@ -30,6 +30,11 @@
         <input type="submit" value="Submit">
     </form>
     
+    <div id="pixel_grid"></div>
+    
+    <!-- Popup Box -->
+    {% include "popup.html" %}
+    
     <!-- Display result -->
     {% if result %}
         {{ img|safe }}
