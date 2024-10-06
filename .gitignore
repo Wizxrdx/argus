@@ -1,6 +1,5 @@
 __pycache__/
 venv/
-assets/
 
 argus.code-workspace
 test.py
