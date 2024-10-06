@@ -20,6 +20,9 @@ def index():
     return render_template('index.html', result=None)
 
 def __request_landsat_cycle(satellite):
+    global time_last_acq_date_request
+    global landsat_cycles
+
     if int(time.time()-time_last_acq_date_request) > 86400:
         url = "https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json"
         print("Requesting Landsat cycles...")
@@ -28,11 +31,12 @@ def __request_landsat_cycle(satellite):
             landsat_cycles = response.json()
             time_last_acq_date_request = int(time.time())
             print("Landsat cycles successfully retrieved.")
-        
 
     return landsat_cycles[satellite]
 
 def __get_next_acquisition_date(longitude, latitude):
+    global wrs2
+
     landsat8_schedules = __request_landsat_cycle('landsat_8')
     landsat9_schedules = __request_landsat_cycle('landsat_9')
     path, row = wrs2.get_path_row(longitude, latitude)
@@ -41,11 +45,11 @@ def __get_next_acquisition_date(longitude, latitude):
 
     for date, details in landsat8_schedules.items():
         if str(path) in details['path']:
-            next_acq_dates[date].append('Landsat 8')
+            next_acq_dates[date] = 'Landsat 8'
 
     for date, details in landsat9_schedules.items():
         if str(path) in details['path']:
-            next_acq_dates[date].append('Landsat 9')
+            next_acq_dates[date] = 'Landsat 9'
 
     html = ''
 
