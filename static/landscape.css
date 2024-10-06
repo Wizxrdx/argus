@@ -12,11 +12,6 @@
   border: 1px solid black;
 }
 
-label {
-  display: block;
-  margin-bottom: 10px;
-}
-
 .container > * {
   margin: 5px;
 }

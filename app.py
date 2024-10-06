@@ -23,14 +23,11 @@ wrs2 = WRS2()
 def plot():
     longitude = request.args.get('long', default=0, type=float)
     latitude = request.args.get('lat', default=0, type=float)
+    band = request.args.get('band', default=0, type=int)
 
     band_data = sentinel_data_retriever.retrieve_band_data(longitude, latitude, time_interval=("2024-09-20", "2024-10-01"))
-    image = display_image_from_list(band_data[1]['values'], brightness_factor=3.5/10000)
+    image = display_image_from_list(band_data[band]['values'], brightness_factor=3.5/10000)
 
-    # Save the image to a BytesIO object
-    print("image data")
-    print(image)
-    print("image data")
     img = io.BytesIO()
     image.save(img, format='PNG')  # You can specify the format (e.g., 'JPEG', 'PNG')
     img.seek(0)  # Go back to the beginning of the BytesIO ob
@@ -46,11 +43,25 @@ def index():
         latitude = data.get('latitude')
         
         result = __get_next_acquisition_date(longitude, latitude)
-        img = f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}" alt="Generated Plot">'
-        
+        band_data = sentinel_data_retriever.retrieve_band_data(longitude, latitude, time_interval=("2024-09-20", "2024-10-01"))
 
-        rendered_table = render_template('table.html', result=result, img=img)
-        return jsonify({'html': rendered_table, 'img':img})
+        header = ''
+        values = ''
+        for x in band_data:
+            band = x['band']
+            header += f'<th>{band}</th>'
+            value = x['values'][1][1]
+            values += f'<td>{value}</td>'
+
+        band_data_html = '<table><tr>'
+        band_data_html += f'{header}</tr>'
+        band_data_html += f'<tr>{values}'
+        band_data_html += '</tr></table>'
+
+        img = render_template('radiobox.html', image=f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}&band=1" alt="Generated Plot">')
+        rendered_table = render_template('table.html', result=result)
+
+        return jsonify({'html': rendered_table, 'img':img, 'values': band_data_html})
 
     return render_template('index.html', result=None, img=None)
 

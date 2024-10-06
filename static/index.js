@@ -38,8 +38,9 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function(response) {
-                $('#grid').html(response.img);
+                $('#selection_wrapper').html(response.img);
                 $('#response').html(response.html);
+                $('#band_value').html(response.values);
             },
             error: function(error) {
                 $('#response').html('<p>Error: ' + error.responseText + '</p>');
@@ -47,64 +48,87 @@ $(document).ready(function() {
         });
     });
 
-    $(document).ready(function() {
-        // Show the popup when a Notify Me! button is clicked
-        $(document).on('click', '.popupButton', function(e) {
-            e.preventDefault(); // Prevent default anchor behavior
+    // Show the popup when a Notify Me! button is clicked
+    $(document).on('click', '.popupButton', function(e) {
+        e.preventDefault(); // Prevent default anchor behavior
 
-            // Get the information from the clicked button
-            var date = $(this).data('date'); // Assuming data-date attribute holds the date
-            var satellite = $(this).data('satellite'); // Assuming data-satellite attribute holds the satellite name
-            
-            // Update the popup title with the information
-            $('#notificationInfo').text(date + ' (' + satellite + ')');
+        // Get the information from the clicked button
+        var date = $(this).data('date'); // Assuming data-date attribute holds the date
+        var satellite = $(this).data('satellite'); // Assuming data-satellite attribute holds the satellite name
+        
+        // Update the popup title with the information
+        $('#notificationInfo').text(date + ' (' + satellite + ')');
 
-            // Store data in hidden input
-            $('#notificationInfo').data('date', date);
-            $('#notificationInfo').data('satellite', satellite);
-            $('#notificationInfo').data('latitude', latitude);
-            $('#notificationInfo').data('longitude', longitude);
-            
-            $('#popup').show(); // Show the popup
-        });
+        // Store data in hidden input
+        $('#notificationInfo').data('date', date);
+        $('#notificationInfo').data('satellite', satellite);
+        $('#notificationInfo').data('latitude', latitude);
+        $('#notificationInfo').data('longitude', longitude);
+        
+        $('#popup').show(); // Show the popup
+    });
 
-        // Close the popup when the close button is clicked
-        $(document).on('click', '.close', function() {
-            $('#popup').hide(); // Hide the popup
-        });
+    // Close the popup when the close button is clicked
+    $(document).on('click', '.close', function() {
+        $('#popup').hide(); // Hide the popup
+    });
 
-        // Handle the submit action for the days input
-        $('#notifySubmit').on('click', function() {
-            var days = $('#days').val();
-            var date = $('#notificationInfo').data('date');
-            var satellite = $('#notificationInfo').data('satellite');
-            var latitude = $('#notificationInfo').data('latitude');
-            var longitude = $('#notificationInfo').data('longitude');
+    // Handle the submit action for the days input
+    $('#notifySubmit').on('click', function() {
+        var days = $('#days').val();
+        var date = $('#notificationInfo').data('date');
+        var satellite = $('#notificationInfo').data('satellite');
+        var latitude = $('#notificationInfo').data('latitude');
+        var longitude = $('#notificationInfo').data('longitude');
 
-            if (days) {
-                // Send AJAX request to handle the notification
-                $.ajax({
-                    url: '/set_notification', // Update with your endpoint
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ 
-                            days: days, 
-                            date: date, 
-                            satellite: satellite,
-                            latitude: latitude,
-                            longitude: longitude
-                        }),
-                        success: function(response) {
-                            alert('Notification set for ' + days + ' days for ' + date + ' (' + satellite + ').');
-                            $('#popup').hide(); // Hide the popup after successful submission
-                        },
-                    error: function(error) {
-                        alert('Error setting notification: ' + error.responseText);
-                    }
-                });
-            } else {
-                alert('Please enter a valid number of days.');
+        if (days) {
+            // Send AJAX request to handle the notification
+            $.ajax({
+                url: '/set_notification', // Update with your endpoint
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 
+                        days: days, 
+                        date: date, 
+                        satellite: satellite,
+                        latitude: latitude,
+                        longitude: longitude
+                    }),
+                    success: function(response) {
+                        alert('Notification set for ' + days + ' days for ' + date + ' (' + satellite + ').');
+                        $('#popup').hide(); // Hide the popup after successful submission
+                    },
+                error: function(error) {
+                    alert('Error setting notification: ' + error.responseText);
+                }
+            });
+        } else {
+            alert('Please enter a valid number of days.');
+        }
+    });
+
+    $('#radio-form').on('submit', function(event) {
+        event.preventDefault();  // Prevent the form from submitting the traditional way
+
+        console.log($(this).serialize());
+        
+        // Send AJAX request
+        $.ajax({
+            url: '/plot.png',
+            type: 'POST',
+            data: $(this).serialize(),  // Serialize form data
+            success: function(response) {
+                // Display the result
+                $('#result').html('<h2>You selected: ' + response.selected_option + '</h2>');
+            },
+            error: function() {
+                $('#result').html('<h2>Error submitting form!</h2>');
             }
         });
+    });
+
+    $(document).on('click', '.bands', function() {
+        var selectedValue = $(this).val();
+        $('#radio-form').submit();
     });
 });
