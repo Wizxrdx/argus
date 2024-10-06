@@ -15,30 +15,16 @@ def index():
         latitude = request.form.get('latitude')
 
         result = __get_next_acquisition_date(longitude, latitude)
+        img = f'<img src="/plot.png?long={longitude}&lat={latitude}" alt="Generated Plot">'
 
-        return render_template('index.html', result=result)
-    return render_template('index.html', result=None)
-
-def __request_landsat_cycle(satellite):
-    global time_last_acq_date_request
-    global landsat_cycles
-
-    if int(time.time()-time_last_acq_date_request) > 86400:
-        url = "https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json"
-        print("Requesting Landsat cycles...")
-        response = requests.get(url)
-        if response.status_code == 200:
-            landsat_cycles = response.json()
-            time_last_acq_date_request = int(time.time())
-            print("Landsat cycles successfully retrieved.")
-
-    return landsat_cycles[satellite]
+        return render_template('index.html', result=result, img=img)
+    return render_template('index.html', result=None, img=None)
 
 def __get_next_acquisition_date(longitude, latitude):
     global wrs2
 
-    landsat8_schedules = __request_landsat_cycle('landsat_8')
-    landsat9_schedules = __request_landsat_cycle('landsat_9')
+    landsat8_schedules = schedule.request_landsat_cycle('landsat_8')
+    landsat9_schedules = schedule.request_landsat_cycle('landsat_9')
     path, row = wrs2.get_path_row(longitude, latitude)
 
     next_acq_dates = {}
