@@ -38,6 +38,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function(response) {
+                $('#grid').html(response.img);
                 $('#response').html(response.html);
             },
             error: function(error) {

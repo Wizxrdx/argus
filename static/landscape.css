@@ -21,10 +21,6 @@ label {
   margin: 5px;
 }
 
-form {
-  width: 50%; /* Full width form */
-}
-
 input[type="text"] {
   width: 100%;
   padding: 10px;
