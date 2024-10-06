@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request
-import requests
+from src.utils import WRS2, LandsatAcquisition
 import time
 from src.utils import WRS2
 
 app = Flask(__name__)
-time_last_acq_date_request = 0
-landsat_cycles = {}
+schedule = LandsatAcquisition()
 wrs2 = WRS2()
 
 @app.route('/', methods=['GET', 'POST'])
@@ -21,21 +20,19 @@ def index():
     return render_template('index.html', result=None, img=None)
 
 def __get_next_acquisition_date(longitude, latitude):
-    global wrs2
+    global wrs2, schedule
 
-    landsat8_schedules = schedule.request_landsat_cycle('landsat_8')
-    landsat9_schedules = schedule.request_landsat_cycle('landsat_9')
     path, row = wrs2.get_path_row(longitude, latitude)
+    landsat8_schedules = schedule.get_next_acquisition_dates('landsat_8', path)
+    landsat9_schedules = schedule.get_next_acquisition_dates('landsat_9', path)
 
     next_acq_dates = {}
+    
+    for date in landsat8_schedules:
+        next_acq_dates[date] = 'Landsat 8'
 
-    for date, details in landsat8_schedules.items():
-        if str(path) in details['path']:
-            next_acq_dates[date] = 'Landsat 8'
-
-    for date, details in landsat9_schedules.items():
-        if str(path) in details['path']:
-            next_acq_dates[date] = 'Landsat 9'
+    for date in landsat9_schedules:
+        next_acq_dates[date] = 'Landsat 9'
 
     html = ''
 
