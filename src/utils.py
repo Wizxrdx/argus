@@ -123,4 +123,18 @@ class LandsatAcquisition:
         print("Saved Landsat cycles.")
 
     def request_landsat_cycle(self, satellite):
-        self._landsat_cycles[satellite]
+        return self._landsat_cycles[satellite]
+
+    def get_next_acquisition_dates(self, satellite, path):
+        landsat_data = self.request_landsat_cycle(satellite)
+        current_date = datetime.now()
+        results = []
+
+        for date_str, details in landsat_data.items():
+            date = datetime.strptime(date_str, "%m/%d/%Y")
+
+            # Check if the path matches and if the date is today or in the future
+            if str(path) in details['path'] and date >= current_date:
+                results.append(date_str)
+
+        return results
