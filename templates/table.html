@@ -1,0 +1,10 @@
+{% if result %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Satellite</th>
+            <th>Notification</th>
+        </tr>
+        {{ result|safe }}
+    </table>
+{% endif %}
