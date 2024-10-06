@@ -63,8 +63,10 @@ def __get_next_acquisition_date(longitude, latitude):
 
     for date, sat in next_acq_dates.items():
         html += '<tr>\n'
-        html += f"<td>{date}</td>\n"
+        html += f"<td style=\"text-align: left;\">{date}</td>\n"
         html += f"<td>{sat}</td>\n"
+        html += f"<td><a href='#' data-date=\"{date}\"\
+        data-satellite=\"{sat}\" class=\"popupButton\">Notify Me!</a></td>\n"
         html += '</tr>\n'
 
     return html
