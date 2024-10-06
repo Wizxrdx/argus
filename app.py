@@ -28,6 +28,9 @@ def plot():
     image = display_image_from_list(band_data[1]['values'], brightness_factor=3.5/10000)
 
     # Save the image to a BytesIO object
+    print("image data")
+    print(image)
+    print("image data")
     img = io.BytesIO()
     image.save(img, format='PNG')  # You can specify the format (e.g., 'JPEG', 'PNG')
     img.seek(0)  # Go back to the beginning of the BytesIO ob

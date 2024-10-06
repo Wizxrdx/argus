@@ -182,17 +182,39 @@ class SentinelDataRetriever:
             return []
 
 @staticmethod
-def display_image_from_list(data_list, brightness_factor=3.5/10000):
+def display_image_from_list(data_list, brightness_factor=3.5/10000,scale_factor=100, color_map='plasma'):
     """Convert a list to an image and display it."""
     image = np.array(data_list)
-    scaled_image = image * brightness_factor
-    clipped_image = np.clip(scaled_image, 0, 1)
+    scaled_image = image * brightness_factor*255
+    # Perform contrast stretching (normalize pixel values)
+    min_val = np.min(scaled_image)
+    max_val = np.max(scaled_image)
+    
+    # Stretch the values to fill the full 0-255 range
+    stretched_image = (scaled_image - min_val) / (max_val - min_val) * 255
+    clipped_image = np.clip(stretched_image, 0, 255)
+    
+    # Convert to uint8 for proper display
+    image_data = clipped_image.astype(np.uint8)
+    
+    # Apply a color map
+    cmap = plt.get_cmap(color_map)
+    colored_image = cmap(image_data / 255)  # Normalize the data to the [0, 1] range for the color map
+    
+    # Convert the color-mapped image to uint8 (R, G, B, A format)
+    colored_image = (colored_image[:, :, :3] * 255).astype(np.uint8)  # Drop the alpha channel
+    
+    # Create a PIL image from the array
+    image = Image.fromarray(colored_image)
 
-    image_data = scaled_image.astype(np.uint8)  # Convert to uint8
-    print(image_data)
-    image = Image.fromarray(image_data)
+    # Scale the image using nearest neighbor to avoid smoothing
+    image = image.resize((image.width * scale_factor, image.height * scale_factor), Image.NEAREST)
+    
+
     
     return image
+    
+    
 
 if __name__ == "__main__":
 
