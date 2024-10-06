@@ -44,6 +44,26 @@ def index():
 
     return render_template('index.html', result=None, img=None)
 
+@app.route('/set_notification', methods=['POST'])
+def set_notification():
+    data = request.get_json()
+
+    days = data.get('days')
+    date = data.get('date')
+    satellite = data.get('satellite')
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+
+
+    # Here, implement your logic to save the notification.
+    if save_notification(days, date, satellite, latitude, longitude):
+        return jsonify({'message': 'Notification set successfully!'}), 200
+    else:
+        return jsonify({'message': 'Failed to set notification!'}), 500
+
+def save_notification(days, date, satellite, latitude, longitude):
+    return True
+
 def __get_next_acquisition_date(longitude, latitude):
     global wrs2, schedule
 
