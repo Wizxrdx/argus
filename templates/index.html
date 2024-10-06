@@ -20,20 +20,21 @@
     <div class="container">
         <!-- Map container -->
         <div id="map"></div>
-   
-        <form id="map_form" method="POST" action="/">
-            
-            <!-- Input for longitude and latitude -->
-            <label for="longitude">Longitude:</label>
-            <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" value="0">
-            
-            
-            <label for="latitude">Latitude:</label>
-            <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" value="0">
-        </form>
+        
+        <div id="wrapper">
+            <form id="map_form" method="POST" action="/">
+                
+                <!-- Input for longitude and latitude -->
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" value="0">
+                
+                
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" value="0">
+            </form>
+            <div id="grid"></div>
+        </div>
     </div>
-    
-    <div id="pixel_grid"></div>
     
     <!-- Popup Box -->
     {% include "popup.html" %}

@@ -37,10 +37,10 @@ def index():
         latitude = data.get('latitude')
         
         result = __get_next_acquisition_date(longitude, latitude)
-        img = f'<img src="/plot.png?long={longitude}&lat={latitude}" alt="Generated Plot">'
+        img = f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}" alt="Generated Plot">'
 
         rendered_table = render_template('table.html', result=result, img=img)
-        return jsonify({'html': rendered_table})
+        return jsonify({'html': rendered_table, 'img':img})
 
     return render_template('index.html', result=None, img=None)
 
