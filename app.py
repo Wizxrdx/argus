@@ -52,7 +52,7 @@ def __get_next_acquisition_date(longitude, latitude):
     landsat9_schedules = schedule.get_next_acquisition_dates('landsat_9', path)
 
     next_acq_dates = {}
-    
+
     for date in landsat8_schedules:
         next_acq_dates[date] = 'Landsat 8'
 
