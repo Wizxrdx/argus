@@ -1,2 +1,2 @@
-# ARGUS
-NASA Space Apps Challenge
+## Automated Remote Geospatial User Service (ARGUS)
+A web platform that enables users to view multispectral satellite images by entering latitude and longitude coordinates, as well as check the future schedule of satellite passes.
