@@ -94,7 +94,7 @@ $(document).ready(function() {
                         longitude: longitude
                     }),
                     success: function(response) {
-                        alert('Notification set for ' + days + ' days for ' + date + ' (' + satellite + ').');
+                        alert('Notification set for ' + days + ' days before ' + date + ' (' + satellite + ').');
                         $('#popup').hide(); // Hide the popup after successful submission
                     },
                 error: function(error) {
