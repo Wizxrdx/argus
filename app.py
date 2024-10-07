@@ -45,23 +45,20 @@ def index():
         result = __get_next_acquisition_date(longitude, latitude)
         band_data = sentinel_data_retriever.retrieve_band_data(longitude, latitude, time_interval=("2024-09-20", "2024-10-01"))
 
-        header = ''
-        values = ''
+        band_data_html = '<table><tr><th>Band</th><th>Value</th></tr>'
         for x in band_data:
             band = x['band']
-            header += f'<th>{band}</th>'
             value = x['values'][1][1]
-            values += f'<td>{value}</td>'
+            band_data_html += '<tr>'
+            band_data_html += f'<td>{band}</td>'
+            band_data_html += f'<td>{value}</td>'
+            band_data_html += '</tr>'
+        band_data_html += '</table>'
 
-        band_data_html = '<table><tr>'
-        band_data_html += f'{header}</tr>'
-        band_data_html += f'<tr>{values}'
-        band_data_html += '</tr></table>'
-
-        img = render_template('radiobox.html', image=f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}&band=1" alt="Generated Plot">')
+        img_info = render_template('radiobox.html', image=f'<img id="img-grid" src="/plot.png?long={longitude}&lat={latitude}&band=1" alt="Generated Plot">', band_display=band_data_html)
         rendered_table = render_template('table.html', result=result)
 
-        return jsonify({'html': rendered_table, 'img':img, 'values': band_data_html})
+        return jsonify({'html': rendered_table, 'img':img_info})
 
     return render_template('index.html', result=None, img=None)
 

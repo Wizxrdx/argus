@@ -40,7 +40,6 @@ $(document).ready(function() {
             success: function(response) {
                 $('#selection_wrapper').html(response.img);
                 $('#response').html(response.html);
-                $('#band_value').html(response.values);
             },
             error: function(error) {
                 $('#response').html('<p>Error: ' + error.responseText + '</p>');

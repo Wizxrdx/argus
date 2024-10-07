@@ -13,6 +13,11 @@ body {
     display: flex;
 }
 
+#grid {
+    width: 100%;
+    height: 100%;
+}
+
 input, label {
     padding: 1px;
     margin: 1px;
@@ -23,12 +28,6 @@ input, label {
     position: relative;
     overflow: hidden;
     clear: both;
-}
-
-ul {
-    display: flex;
-    list-style-type: none;
-    justify-content: space-evenly;
 }
 
 #wrapper {
@@ -48,9 +47,21 @@ ul {
     background-color: white;
 }
 
-#radiobox-form {
-    padding: 10px;
+#selection_wrapper > table {
+    width: auto;
+    min-width: 100px;
+    white-space: nowrap;
+}
+
+img {
+    image-rendering: pixelated;
     width: 100%;
+    height: 100%;
+}
+
+#radiobox-form {
+    white-space: nowrap;
+    padding: 10px;
     align-self: center;
 }
 
