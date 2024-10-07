@@ -18,8 +18,13 @@ body {
     height: 100%;
 }
 
-input, label {
-    padding: 1px;
+label {
+    font-size: smaller;
+}
+
+#longitude, #latitude, #days, #email {
+    width: 100%;
+    padding: 10px;
     margin: 1px;
     font-size: smaller;
 }
