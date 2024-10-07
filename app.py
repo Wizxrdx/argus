@@ -26,7 +26,7 @@ def plot():
     band = request.args.get('band', default=0, type=int)
 
     band_data = sentinel_data_retriever.retrieve_band_data(longitude, latitude, time_interval=("2024-09-20", "2024-10-01"))
-    image = display_image_from_list(band_data[band]['values'], brightness_factor=3.5/10000)
+    image = display_image_from_list(band_data[band-1]['values'], brightness_factor=3.5/10000)
 
     img = io.BytesIO()
     image.save(img, format='PNG')  # You can specify the format (e.g., 'JPEG', 'PNG')

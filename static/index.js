@@ -107,28 +107,19 @@ $(document).ready(function() {
         }
     });
 
-    $('#radio-form').on('submit', function(event) {
+    $(document).on('click', '.bands', function() {
+        $('#radiobox-form').submit();
+    });
+    
+    $(document).on('submit', '#radiobox-form', function(event) {
         event.preventDefault();  // Prevent the form from submitting the traditional way
 
-        console.log($(this).serialize());
-        
-        // Send AJAX request
-        $.ajax({
-            url: '/plot.png',
-            type: 'POST',
-            data: $(this).serialize(),  // Serialize form data
-            success: function(response) {
-                // Display the result
-                $('#result').html('<h2>You selected: ' + response.selected_option + '</h2>');
-            },
-            error: function() {
-                $('#result').html('<h2>Error submitting form!</h2>');
-            }
-        });
-    });
+        const formData = {
+            long: $('#longitude').val(),
+            lat: $('#latitude').val(),
+            band: $('input[name="option"]:checked').val()
+        };
 
-    $(document).on('click', '.bands', function() {
-        var selectedValue = $(this).val();
-        $('#radio-form').submit();
+        $('#img-grid').attr('src', '/plot.png?' + $.param(formData));
     });
 });
