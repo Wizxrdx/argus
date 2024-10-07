@@ -4,15 +4,17 @@ from src.sentinel_api import SentinelDataRetriever, display_image_from_list
 import io
 import matplotlib.pyplot as plt
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
 
-
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-client_id = 'sh-64233615-ff7d-48cb-837f-18b46b07e4ca'
-client_secret = 'a8Su2H9C36qa3oaEXGDEe6MQLrGMuzgV'
-token_url = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
-base_url = "https://sh.dataspace.copernicus.eu"
+client_id = os.getenv('SENTINELHUB_CLIENT_ID')
+client_secret = os.getenv('SENTINELHUB_CLIENT_SECRET')
+token_url = os.getenv('SENTINELHUB_TOKEN_URL')
+base_url = os.getenv('SENTINELHUB_BASE_URL')
 
 # Initialize the SentinelDataRetriever
 sentinel_data_retriever = SentinelDataRetriever(client_id, client_secret, token_url, base_url)

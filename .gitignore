@@ -4,3 +4,4 @@ venv/
 argus.code-workspace
 test.py
 myenv
+.env
