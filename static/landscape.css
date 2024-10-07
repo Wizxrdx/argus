@@ -2,14 +2,18 @@
 .container {
   display: flex;
   flex-direction: row; /* Horizontal layout */
-  align-items: flex-start; /* Center the items */
+  align-items: stretch; /* Center the items */
+  min-height: 80vh;
 }
 
 /* Map Styles */
 #map {
-  height: 60vh;
   width: 100%; /* Full width */
   border: 1px solid black;
+}
+
+#img-grid {
+  height: 100%;
 }
 
 .container > * {
