@@ -12,10 +12,6 @@
   border: 1px solid black;
 }
 
-#img-grid {
-  height: 100%;
-}
-
 .container > * {
   margin: 5px;
 }

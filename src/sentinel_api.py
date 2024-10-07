@@ -182,7 +182,7 @@ class SentinelDataRetriever:
             return []
 
 @staticmethod
-def display_image_from_list(data_list, brightness_factor=3.5/10000,scale_factor=100, color_map='plasma'):
+def display_image_from_list(data_list, brightness_factor=3.5/10000,scale_factor=50, color_map='plasma'):
     """Convert a list to an image and display it."""
     image = np.array(data_list)
     scaled_image = image * brightness_factor*255
